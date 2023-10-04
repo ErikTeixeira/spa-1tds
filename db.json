@@ -37,3 +37,10 @@
     }
   ]
 }
+    },
+    {
+      "nome": "Cubo Mágico",
+      "desc": "Metálico",
+      "preco": "120",
+      "img": "https://i0.wp.com/cubizzperu.com/wp-content/uploads/2023/06/61qv-kxse8L.jpg",
+      "id": 8
