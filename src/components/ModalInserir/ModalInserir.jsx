@@ -43,8 +43,14 @@ export default function ModalInserir(props) {
 
     fetch("http://localhost:5000/produtos",{
       method: "POST",
-      hea
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(produto)
     })
+    .then((response)=>response.json())
+    .then((response)=> console.log(response))
+    .catch(error=> console.log(error))
 
   }
 
