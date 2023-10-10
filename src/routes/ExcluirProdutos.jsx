@@ -1,52 +1,69 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { ListaProdutos } from "../components/ListaProdutos";
-import style from "./ExcluirProdutos.module.css";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import styles from './ExcluirProdutos.module.scss'; // Import the SCSS module
 
 export default function ExcluirProdutos() {
-
-  document.title = "EXCLUIR PRODUTO";
+  document.title = 'EXCLUIR PRODUTO';
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const produto = ListaProdutos.filter((produto) => produto.id == id)[0];
+  const [produto, setProduto] = useState({});
 
-  const handleDelete = ()=>{
-    
-    let indice;
-    //Ou utilizando o método findIndex
-    indice = ListaProdutos.findIndex(item => item.id == produto.id);
+  
+  useEffect(() => {
+    // Este efeito é executado quando o componente é montado ou quando 'id' muda.
+    // Faz uma solicitação GET para obter os detalhes do produto da API.
+    fetch(`http://localhost:5000/produtos/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProduto(data); // Define os detalhes do produto recuperados da API no estado
+      })
+      .catch((error) => console.log(error));
+  }, [id]);
 
-    //Alterando o produto na lista com o método splice()
-    ListaProdutos.splice(indice,1);
+  const handleDelete = () => {
+    // Esta função é chamada quando o botão "EXCLUIR" é clicado.
+    // Faz uma solicitação DELETE para excluir o produto da API.
+    fetch(`http://localhost:5000/produtos/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(() => {
+        alert('Produto excluído com SUCESSO!');
+        navigate('/produtos'); // Redireciona para a página de produtos após a exclusão
+      })
+      .catch((error) => console.log(error));
+  };
 
-    alert("Produto excluído com SUCESSO!");
-
-    //Redirecionando o usuáio para a página de produtos!
-    navigate('/produtos');
-  }
 
   return (
-    <>
+    <div className={styles.ExcluirProdutos}>
+      <h1>Excluir Produto</h1>
+
+      <div className={styles['produto-selecionado']}>
+        <h2>Produto Selecionado</h2>
+        <h3>Deseja realmente excluir esse produto?</h3>
+
+        {/* Exibição dos detalhes do produto */}
         <div>
-          <h1 className={style.tit}>Excluir Produtos</h1>
-          
-          <div className={style.card}>
-            <h2>Produto Selecionado</h2>
-            <h3 className={style.alert}>Deseja realmente excluir esse produto?</h3>
-            <figure>
-              <img src={produto.img} alt={produto.desc} />
-              <figcaption>{produto.nome} - <span>R$ {produto.preco}</span></figcaption>
-            </figure>
-            
-            <div className={style.btn}>
-              <button onClick={handleDelete}>EXCLUIR</button>
-              <button onClick={()=> navigate("/produtos")}>CANCELAR</button>
-            </div>
-
-          </div>
-
+          <img src={produto.img} alt={produto.desc} />
+          <h4>{produto.nome}</h4>
+          <p>Preço: R$ {produto.preco}</p>
+          <p>Descrição: {produto.desc}</p>
         </div>
-    </>
-    
-  )
+
+        <div>
+          <button onClick={handleDelete}>EXCLUIR</button>
+          <button onClick={() => navigate('/produtos')}>CANCELAR</button>
+        </div>
+      </div>
+    </div>
+  );
 }
