@@ -23,7 +23,6 @@ const router = createBrowserRouter(
   ]
 );
 
-
 //BLOCO DE ROTAS
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
